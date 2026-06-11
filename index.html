@@ -435,7 +435,7 @@
     </div>
     <div class="reg-actions" style="margin-top:14px;">
       <span class="save-msg" id="save-msg">✓ Salvo!</span>
-      <button class="btn-save" onclick="saveEntry()">Salvar registro</button>
+      <button class="btn-save" id="btn-save">Salvar registro</button>
     </div>
   </div>
 
@@ -448,7 +448,7 @@
   <div class="history-card">
     <div class="hist-head">
       <span id="hist-count">0 registros</span>
-      <button class="btn-clear" onclick="clearAll()">Limpar tudo</button>
+      <button class="btn-clear" id="btn-clear">Limpar tudo</button>
     </div>
     <div id="history-list"></div>
   </div>
@@ -763,7 +763,7 @@ function renderHistory(entries) {
       <span class="hist-lvl">Lv ${e.lvl}</span>
       <span class="hist-pct">${e.pct}%</span>
       ${gainTxt ? `<span class="hist-gain ${gainClass}">${gainTxt}</span>` : '<span class="hist-gain" style="color:var(--text3)">—</span>'}
-      <button class="hist-del" onclick="deleteEntry(${i})" title="Deletar">×</button>
+      <button class="hist-del" data-idx="${i}" title="Deletar">×</button>
     `;
     listEl.appendChild(row);
   });
@@ -814,8 +814,19 @@ document.getElementById('inp-lvl').addEventListener('input', function() {
   const pct = parseInt(document.getElementById('inp-pct').value) || 0;
   updateBar(pct);
 });
+document.getElementById('btn-save').addEventListener('click', saveEntry);
+document.getElementById('btn-clear').addEventListener('click', function() {
+  if (confirm('Apagar todo o histórico? Essa ação não tem volta.')) {
+    localStorage.removeItem(KEY);
+    render();
+  }
+});
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') saveEntry();
+});
+document.getElementById('history-list').addEventListener('click', function(e) {
+  const btn = e.target.closest('.hist-del');
+  if (btn) deleteEntry(parseInt(btn.dataset.idx));
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
