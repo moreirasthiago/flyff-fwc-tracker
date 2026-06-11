@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Psykeeper FWC 2026 — Daily Tracker</title>
+<style>
+  :root {
+    --bg: #0d0d14;
+    --bg2: #13131f;
+    --bg3: #1a1a2a;
+    --card: #1e1e30;
+    --border: rgba(160,130,255,0.15);
+    --border2: rgba(160,130,255,0.3);
+    --purple: #9d6fff;
+    --purple2: #c4a0ff;
+    --purple3: #6b42cc;
+    --teal: #2ed8a8;
+    --teal2: #1aad88;
+    --coral: #ff6b8a;
+    --amber: #f9a825;
+    --text: #e8e0ff;
+    --text2: #9b90c0;
+    --text3: #5c5480;
+    --green: #4caf82;
+    --red: #f06060;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: linear-gradient(135deg, #1a0a2e 0%, #0d0d14 60%);
+    border-bottom: 1px solid var(--border2);
+    padding: 1.5rem 2rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(157,111,255,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-row { display: flex; align-items: center; gap: 16px; }
+  .char-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple3), var(--coral));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    border: 2px solid var(--purple);
+    flex-shrink: 0;
+  }
+  .header-info h1 {
+    font-size: 1.25rem; font-weight: 700;
+    color: var(--purple2);
+    letter-spacing: 0.02em;
+  }
+  .header-info p {
+    font-size: 0.8rem; color: var(--text2);
+    margin-top: 2px;
+  }
+  .server-countdown {
+    margin-left: auto;
+    text-align: right;
+  }
+  .server-countdown .days-num {
+    font-size: 2rem; font-weight: 800;
+    color: var(--coral);
+    line-height: 1;
+  }
+  .server-countdown .days-label {
+    font-size: 0.7rem; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .server-bar-wrap {
+    margin-top: 0.75rem;
+    background: rgba(255,255,255,0.06);
+    border-radius: 99px;
+    height: 4px;
+    overflow: hidden;
+  }
+  .server-bar {
+    height: 4px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--purple3), var(--coral));
+  }
+  .server-bar-label {
+    font-size: 0.7rem; color: var(--text3);
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  /* LAYOUT */
+  .main { padding: 1.5rem 2rem; max-width: 900px; margin: 0 auto; }
+  @media (max-width: 600px) { .main { padding: 1rem; } }
+
+  /* SUMMARY CARDS */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .scard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .scard-label { font-size: 0.72rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .scard-value { font-size: 1.5rem; font-weight: 700; color: var(--purple2); }
+  .scard-sub { font-size: 0.75rem; color: var(--text3); margin-top: 3px; }
+  .scard.highlight { border-color: var(--purple); }
+  .scard-value.green { color: var(--teal); }
+  .scard-value.amber { color: var(--amber); }
+  .scard-value.red { color: var(--coral); }
+
+  /* SECTION TITLES */
+  .sec-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sec-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* REGISTER FORM */
+  .reg-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 1.5rem;
+  }
+  .reg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 480px) { .reg-grid { grid-template-columns: 1fr; } }
+  .field label {
+    display: block;
+    font-size: 0.75rem; color: var(--text2);
+    margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .field input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 1rem;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--purple); }
+  .field input::placeholder { color: var(--text3); }
+  .reg-actions { display: flex; gap: 10px; align-items: center; justify-content: flex-end; }
+  .btn-save {
+    background: var(--purple3);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-save:hover { background: var(--purple); }
+  .btn-save:active { transform: scale(0.97); }
+  .save-msg {
+    font-size: 0.8rem; color: var(--teal);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .save-msg.show { opacity: 1; }
+
+  /* TODAY XP BAR */
+  .today-bar-wrap {
+    margin-top: 14px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 99px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .today-bar {
+    height: 8px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--purple3), var(--teal));
+    transition: width 0.5s ease;
+  }
+  .today-bar-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.72rem; color: var(--text3);
+    margin-top: 5px;
+  }
+
+  /* MILESTONES */
+  .milestones { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
+  .ms {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .ms:hover { border-color: var(--border2); }
+  .ms.done { border-color: rgba(46,216,168,0.3); }
+  .ms.next { border-color: var(--purple); }
+  .ms.locked { opacity: 0.55; }
+
+  .ms-lvl {
+    font-size: 1rem; font-weight: 700;
+    color: var(--purple2);
+    width: 42px; flex-shrink: 0;
+  }
+  .ms.done .ms-lvl { color: var(--teal); }
+
+  .ms-info { flex: 1; min-width: 0; }
+  .ms-name { font-size: 0.82rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ms-desc { font-size: 0.72rem; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .ms-bar-wrap {
+    width: 90px; flex-shrink: 0;
+    background: rgba(255,255,255,0.06);
+    border-radius: 99px;
+    height: 5px;
+    overflow: hidden;
+  }
+  @media (max-width: 480px) { .ms-bar-wrap { display: none; } }
+  .ms-bar { height: 5px; border-radius: 99px; background: var(--purple3); }
+  .ms.done .ms-bar { background: var(--teal2); }
+  .ms.next .ms-bar { background: linear-gradient(90deg, var(--purple3), var(--purple2)); }
+
+  .ms-eta {
+    font-size: 0.75rem; color: var(--text2);
+    width: 72px; text-align: right; flex-shrink: 0;
+  }
+  .ms.done .ms-eta { color: var(--teal); }
+  .ms-eta.danger { color: var(--coral); }
+
+  .ms-tag {
+    font-size: 0.65rem; font-weight: 600;
+    border-radius: 99px;
+    padding: 2px 8px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .ms-tag.purple { background: rgba(157,111,255,0.2); color: var(--purple2); }
+  .ms-tag.teal   { background: rgba(46,216,168,0.18); color: var(--teal); }
+  .ms-tag.amber  { background: rgba(249,168,37,0.18); color: var(--amber); }
+  .ms-tag.coral  { background: rgba(255,107,138,0.18); color: var(--coral); }
+  .ms-tag.done   { background: rgba(46,216,168,0.15); color: var(--teal); }
+
+  /* TOOLTIP */
+  .ms-tooltip {
+    display: none;
+    position: absolute;
+    left: 0; top: calc(100% + 6px);
+    background: #252040;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.78rem;
+    color: var(--text2);
+    z-index: 10;
+    width: 100%;
+    line-height: 1.6;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .ms:hover .ms-tooltip { display: block; }
+  .ms-tooltip strong { color: var(--purple2); }
+  .ms-tooltip ul { padding-left: 14px; margin-top: 4px; }
+  .ms-tooltip li { margin-bottom: 2px; }
+
+  /* HISTORY */
+  .history-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .hist-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hist-head span { font-size: 0.78rem; color: var(--text2); }
+  .btn-clear {
+    font-size: 0.72rem; color: var(--coral);
+    background: none; border: none; cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .btn-clear:hover { opacity: 1; }
+  .hist-row {
+    display: flex; align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    font-size: 0.82rem;
+  }
+  .hist-row:last-child { border-bottom: none; }
+  .hist-date { color: var(--text3); width: 52px; flex-shrink: 0; }
+  .hist-lvl { color: var(--text); font-weight: 500; }
+  .hist-pct { color: var(--text2); }
+  .hist-gain { margin-left: auto; color: var(--teal); font-weight: 600; font-size: 0.78rem; }
+  .hist-gain.neg { color: var(--coral); }
+  .hist-del {
+    background: none; border: none; cursor: pointer;
+    color: var(--text3); font-size: 14px;
+    padding: 2px 6px; border-radius: 4px;
+    transition: color 0.2s;
+  }
+  .hist-del:hover { color: var(--coral); }
+  .hist-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.82rem;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.72rem;
+    padding: 1rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  /* ALERT */
+  .alert {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .alert.warn { background: rgba(249,168,37,0.12); border: 1px solid rgba(249,168,37,0.3); color: var(--amber); display: block; }
+  .alert.danger { background: rgba(240,96,96,0.12); border: 1px solid rgba(240,96,96,0.3); color: var(--red); display: block; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-row">
+    <div class="char-avatar">🧝‍♀️</div>
+    <div class="header-info">
+      <h1>Psykeeper · FWC 2026</h1>
+      <p id="header-sub">Carregando...</p>
+    </div>
+    <div class="server-countdown">
+      <div class="days-num" id="days-left">—</div>
+      <div class="days-label">dias restantes</div>
+    </div>
+  </div>
+  <div class="server-bar-wrap" style="margin-top:12px;">
+    <div class="server-bar" id="server-bar" style="width:0%"></div>
+  </div>
+  <div class="server-bar-label" id="server-bar-label"></div>
+</header>
+
+<div class="main">
+
+  <div id="pace-alert" class="alert" style="display:none"></div>
+
+  <!-- SUMMARY -->
+  <div class="summary-grid" style="margin-bottom:1.5rem;">
+    <div class="scard highlight">
+      <div class="scard-label">Level atual</div>
+      <div class="scard-value" id="cur-lvl">—</div>
+      <div class="scard-sub" id="cur-pct">—% do level</div>
+    </div>
+    <div class="scard">
+      <div class="scard-label">Próximo marco</div>
+      <div class="scard-value amber" id="next-ms-lvl">—</div>
+      <div class="scard-sub" id="next-ms-eta">—</div>
+    </div>
+    <div class="scard">
+      <div class="scard-label">Ganho hoje</div>
+      <div class="scard-value green" id="gain-today">+0%</div>
+      <div class="scard-sub" id="sessions-today">0 registros hoje</div>
+    </div>
+    <div class="scard">
+      <div class="scard-label">Média diária</div>
+      <div class="scard-value" id="daily-avg">—%</div>
+      <div class="scard-sub">últimos 7 dias</div>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="sec-title">Registrar progresso</div>
+  <div class="reg-card">
+    <div class="reg-grid">
+      <div class="field">
+        <label>Level</label>
+        <input type="number" id="inp-lvl" min="1" max="190" placeholder="ex: 127">
+      </div>
+      <div class="field">
+        <label>% atual do level</label>
+        <input type="number" id="inp-pct" min="0" max="99" placeholder="ex: 42">
+      </div>
+    </div>
+    <div class="today-bar-wrap">
+      <div class="today-bar" id="today-bar" style="width:0%"></div>
+    </div>
+    <div class="today-bar-label">
+      <span id="bar-label-left">Level atual</span>
+      <span id="bar-label-right">próximo level</span>
+    </div>
+    <div class="reg-actions" style="margin-top:14px;">
+      <span class="save-msg" id="save-msg">✓ Salvo!</span>
+      <button class="btn-save" onclick="saveEntry()">Salvar registro</button>
+    </div>
+  </div>
+
+  <!-- MILESTONES -->
+  <div class="sec-title">Marcos</div>
+  <div class="milestones" id="milestones-list"></div>
+
+  <!-- HISTORY -->
+  <div class="sec-title">Histórico</div>
+  <div class="history-card">
+    <div class="hist-head">
+      <span id="hist-count">0 registros</span>
+      <button class="btn-clear" onclick="clearAll()">Limpar tudo</button>
+    </div>
+    <div id="history-list"></div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Flyff Universe · FWC 2026 · Servidor encerra 29/out/2026 · dados salvos localmente no navegador
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const SERVER_CLOSE = new Date('2026-10-29T23:59:59');
+const SERVER_OPEN  = new Date('2026-01-01T00:00:00'); // aproximado
+
+const MILESTONES = [
+  {
+    lvl: 130,
+    tag: 'dungeon', tagClass: 'amber',
+    name: 'Storm Peak Nightmare',
+    desc: 'Acesso ao melhor drop de Piercing Cards A-tier pré-140',
+    tooltip: `<strong>Lv 130 — Storm Peak Nightmare</strong><ul>
+      <li>Melhor dungeon pra farmar <strong>Piercing Cards A-tier</strong></li>
+      <li>Drops: Element Attack Boxes, Pillboxes, Rainbow Cotton Candies</li>
+      <li>Pet Cages B/A tier disponíveis</li>
+      <li>Cooldown separado por dungeon, 2 entradas grátis/dia</li>
+    </ul>`
+  },
+  {
+    lvl: 135,
+    tag: 'Penel Set', tagClass: 'purple',
+    name: 'Penel Set + STA build',
+    desc: 'Transição para full STA — survivabilidade máxima no AoE',
+    tooltip: `<strong>Lv 135 — Penel Set</strong><ul>
+      <li>Equipa o <strong>Penel Set</strong> (Psykeeper feminino)</li>
+      <li>Transição completa para build <strong>full STA</strong></li>
+      <li>Face tank AoE fica muito mais consistente</li>
+      <li>Considerar rever distribuição de pontos de status</li>
+    </ul>`
+  },
+  {
+    lvl: 140,
+    tag: 'The Wilds', tagClass: 'coral',
+    name: 'The Wilds (lv 141+)',
+    desc: 'DG endgame — Sunstones, Lusaka's weapons, sets lv 150',
+    tooltip: `<strong>Lv 140 — The Wilds</strong><ul>
+      <li><strong>Sunstones</strong>: material base para Ultimate Equipment</li>
+      <li><strong>Cursed Jewelry Fragments</strong>: crafta Ultimate Jewelry Sets</li>
+      <li><strong>Ultima</strong> (10x = 1 Ultimate Orb): drop raro nos Treasure Chests</li>
+      <li><strong>Lusaka's Unique Weapons</strong>: drop de Beast King Khan</li>
+      <li>Sets de armor lv 150 para chars 1v1</li>
+      <li>Mecânicas novas: Tethered, Pestilence, Summoning Strike</li>
+      <li>Libera também as <strong>Cursed Dungeons</strong> (lv 141-160)</li>
+    </ul>`
+  },
+  {
+    lvl: 150,
+    tag: 'novos sets', tagClass: 'purple',
+    name: 'Sets Manebound / Manetress',
+    desc: 'Stats de nova geração: Spiritual Charge, Arcane Insight...',
+    tooltip: `<strong>Lv 150 — Sets nova geração</strong><ul>
+      <li><strong>Spiritual Charge Chance</strong>: +10% Skill Dmg por 5s ao causar dano</li>
+      <li><strong>Arcane Insight Chance</strong>: reset de cooldown aleatório ao usar skill</li>
+      <li><strong>Last Stand Chance</strong>: +10% Attack Power abaixo de 25% HP</li>
+      <li><strong>Healing Grace Chance</strong>: +10% healing por 5s ao usar qualquer skill</li>
+      <li><strong>Aura Burst Chance</strong>: dano AoE ao receber dano</li>
+    </ul>`
+  },
+  {
+    lvl: 160,
+    tag: 'Cursed cap', tagClass: 'teal',
+    name: 'Cursed Dungeons — nível máximo',
+    desc: 'Cap das Cursed Dungeons, melhor drop rate de Sunstones',
+    tooltip: `<strong>Lv 160 — Cursed Dungeons max tier</strong><ul>
+      <li>Cap de nível das Cursed Dungeons</li>
+      <li>Melhor drop de <strong>Sunstones</strong> e <strong>Cursed Jewelry Fragments</strong></li>
+      <li>Golden Aibatt pode spawnar — mata pra dar buff <em>Feeling Generous</em> no boss</li>
+      <li>Sem penalidade de drop por diferença de level nos dungeons instanciados</li>
+    </ul>`
+  },
+  {
+    lvl: 170,
+    tag: 'push', tagClass: 'teal',
+    name: 'Lv 170',
+    desc: 'Continuando o grind rumo ao cap',
+    tooltip: `<strong>Lv 170</strong><ul><li>Marco intermediário no trecho 160–190</li><li>Continue maximizando DG runs diárias</li></ul>`
+  },
+  {
+    lvl: 180,
+    tag: 'push', tagClass: 'amber',
+    name: 'Lv 180',
+    desc: 'A 10 levels do cap do servidor',
+    tooltip: `<strong>Lv 180</strong><ul><li>Reta final rumo ao level cap</li><li>Avalie o ritmo vs. dias restantes no servidor</li></ul>`
+  },
+  {
+    lvl: 190,
+    tag: 'CAP', tagClass: 'coral',
+    name: 'Level cap — FWC 2026',
+    desc: 'Nível máximo do servidor FWC',
+    tooltip: `<strong>Lv 190 — Level Cap FWC 2026</strong><ul>
+      <li>Level máximo do servidor FWC 2026</li>
+      <li>Servidor encerra em <strong>29/out/2026</strong></li>
+      <li>GG — missão cumprida! 🎉</li>
+    </ul>`
+  }
+];
+
+// ─── STORAGE ──────────────────────────────────────────────────────────────────
+const KEY = 'flyff_fwc26_entries';
+function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
+function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function todayStr() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10); // YYYY-MM-DD
+}
+function fmtDate(iso) {
+  const [, m, day] = iso.split('-');
+  return `${day}/${m}`;
+}
+function lvlFloat(lvl, pct) { return lvl + pct / 100; }
+function daysLeft() {
+  const now = new Date();
+  return Math.max(0, Math.ceil((SERVER_CLOSE - now) / 86400000));
+}
+function serverPct() {
+  const total = SERVER_CLOSE - SERVER_OPEN;
+  const elapsed = new Date() - SERVER_OPEN;
+  return Math.min(100, Math.max(0, (elapsed / total) * 100));
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  const entries = load();
+  const dl = daysLeft();
+
+  // header
+  document.getElementById('days-left').textContent = dl;
+  document.getElementById('server-bar').style.width = serverPct().toFixed(1) + '%';
+  document.getElementById('server-bar-label').textContent =
+    `${Math.round(serverPct())}% do servidor consumido`;
+
+  // current state (last entry)
+  let curLvl = 127, curPct = 0;
+  if (entries.length > 0) {
+    const last = entries[entries.length - 1];
+    curLvl = last.lvl; curPct = last.pct;
+  }
+  document.getElementById('cur-lvl').textContent = curLvl;
+  document.getElementById('cur-pct').textContent = curPct + '% do level';
+  document.getElementById('header-sub').textContent =
+    `Lv ${curLvl} · ${curPct}% · AoE Face Tank Psykeeper`;
+
+  // pre-fill inputs
+  document.getElementById('inp-lvl').value = curLvl;
+  document.getElementById('inp-pct').value = curPct;
+  updateBar(curPct);
+
+  // today gain
+  const todayEntries = entries.filter(e => e.date === todayStr());
+  let gainToday = 0;
+  if (todayEntries.length >= 2) {
+    const first = lvlFloat(todayEntries[0].lvl, todayEntries[0].pct);
+    const lastT = lvlFloat(todayEntries[todayEntries.length-1].lvl, todayEntries[todayEntries.length-1].pct);
+    gainToday = Math.round((lastT - first) * 100);
+  } else if (todayEntries.length === 1 && entries.length >= 2) {
+    const prev = entries[entries.length - 2];
+    const lastT = entries[entries.length - 1];
+    if (prev.date !== todayStr()) {
+      gainToday = Math.round((lvlFloat(lastT.lvl, lastT.pct) - lvlFloat(prev.lvl, prev.pct)) * 100);
+    }
+  }
+  const gainEl = document.getElementById('gain-today');
+  gainEl.textContent = (gainToday >= 0 ? '+' : '') + gainToday + '%';
+  gainEl.className = 'scard-value ' + (gainToday >= 0 ? 'green' : 'red');
+  document.getElementById('sessions-today').textContent =
+    todayEntries.length + ' registro' + (todayEntries.length !== 1 ? 's' : '') + ' hoje';
+
+  // 7-day average (% per day across levels)
+  let avg7 = 0;
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
+  const recent = entries.filter(e => new Date(e.date) >= cutoff);
+  if (recent.length >= 2) {
+    const span = lvlFloat(recent[recent.length-1].lvl, recent[recent.length-1].pct)
+               - lvlFloat(recent[0].lvl, recent[0].pct);
+    const days = Math.max(1, (new Date(recent[recent.length-1].date) - new Date(recent[0].date)) / 86400000);
+    avg7 = Math.round(span * 100 / days);
+  }
+  document.getElementById('daily-avg').textContent = avg7 > 0 ? avg7 + '%' : '—';
+
+  // pace alert
+  const alertEl = document.getElementById('pace-alert');
+  if (avg7 > 0 && dl > 0) {
+    const curFloat = lvlFloat(curLvl, curPct);
+    const needed = (190 - curFloat) * 100; // in % units
+    const canDo = avg7 * dl;
+    const ratio = canDo / needed;
+    if (ratio < 0.5) {
+      alertEl.className = 'alert danger';
+      alertEl.textContent = `⚠️ No ritmo atual (${avg7}%/dia) você consegue ~${Math.floor(curFloat + canDo/100)} antes do servidor fechar. Precisa de ${Math.ceil(needed/dl)}%/dia pra chegar no cap.`;
+      alertEl.style.display = 'block';
+    } else if (ratio < 0.8) {
+      alertEl.className = 'alert warn';
+      alertEl.textContent = `📊 Ritmo atual: ${avg7}%/dia. Precisaria de ${Math.ceil(needed/dl)}%/dia pra chegar no cap (lv 190). Acelera um pouco!`;
+      alertEl.style.display = 'block';
+    } else {
+      alertEl.style.display = 'none';
+    }
+  } else {
+    alertEl.style.display = 'none';
+  }
+
+  // milestones
+  const curFloat = lvlFloat(curLvl, curPct);
+  const msEl = document.getElementById('milestones-list');
+  msEl.innerHTML = '';
+  let foundNext = false;
+  MILESTONES.forEach(ms => {
+    const done = curFloat >= ms.lvl;
+    const isNext = !done && !foundNext;
+    if (isNext) foundNext = true;
+
+    const distLevels = Math.max(0, ms.lvl - curFloat);
+    const distPct = distLevels * 100; // in % units
+
+    let etaTxt = '';
+    let etaClass = '';
+    if (done) {
+      etaTxt = 'Concluído';
+    } else if (avg7 > 0) {
+      const etaDays = Math.ceil(distPct / avg7);
+      const etaDate = new Date();
+      etaDate.setDate(etaDate.getDate() + etaDays);
+      const etaAfterServer = etaDate > SERVER_CLOSE;
+      if (etaAfterServer) {
+        etaTxt = 'depois do close ⚠️';
+        etaClass = 'danger';
+      } else {
+        const dd = String(etaDate.getDate()).padStart(2, '0');
+        const mm = String(etaDate.getMonth() + 1).padStart(2, '0');
+        etaTxt = `~${dd}/${mm} (${etaDays}d)`;
+        if (etaDays > dl * 0.8) etaClass = 'danger';
+      }
+    } else {
+      etaTxt = 'registre mais';
+    }
+
+    // bar progress within this milestone (from previous to this)
+    const prevMs = MILESTONES.find(m2 => m2.lvl < ms.lvl && curFloat >= (MILESTONES[MILESTONES.indexOf(ms)-1]?.lvl || 0));
+    const prevLvl = isNext ? curLvl : (MILESTONES[MILESTONES.indexOf(ms)-1]?.lvl || ms.lvl - 10);
+    const range = ms.lvl - prevLvl;
+    const progress = done ? 100 : Math.round(Math.max(0, (curFloat - prevLvl) / range * 100));
+
+    const div = document.createElement('div');
+    div.className = `ms${done ? ' done' : ''}${isNext ? ' next' : ''}${(!done && !isNext) ? ' locked' : ''}`;
+    div.innerHTML = `
+      <div class="ms-lvl">${ms.lvl}</div>
+      <div class="ms-info">
+        <div class="ms-name">${ms.name}</div>
+        <div class="ms-desc">${ms.desc}</div>
+      </div>
+      <div class="ms-bar-wrap"><div class="ms-bar" style="width:${progress}%"></div></div>
+      <div class="ms-eta ${etaClass}">${etaTxt}</div>
+      <span class="ms-tag ${done ? 'done' : ms.tagClass}">${done ? '✓ ok' : ms.tag}</span>
+      <div class="ms-tooltip">${ms.tooltip}</div>
+    `;
+    msEl.appendChild(div);
+  });
+
+  // next milestone summary
+  const nextMs = MILESTONES.find(m => lvlFloat(curLvl, curPct) < m.lvl);
+  if (nextMs) {
+    document.getElementById('next-ms-lvl').textContent = nextMs.lvl;
+    const dist = Math.max(0, nextMs.lvl - curFloat);
+    document.getElementById('next-ms-eta').textContent =
+      avg7 > 0 ? `~${Math.ceil(dist * 100 / avg7)} dias` : `${(dist * 100).toFixed(0)}% de distância`;
+  } else {
+    document.getElementById('next-ms-lvl').textContent = 'Cap!';
+    document.getElementById('next-ms-eta').textContent = 'você chegou lá';
+  }
+
+  // history
+  renderHistory(entries);
+}
+
+function renderHistory(entries) {
+  const listEl = document.getElementById('history-list');
+  document.getElementById('hist-count').textContent = entries.length + ' registro' + (entries.length !== 1 ? 's' : '');
+
+  if (entries.length === 0) {
+    listEl.innerHTML = '<div class="hist-empty">Nenhum registro ainda. Salve seu primeiro progresso acima!</div>';
+    return;
+  }
+
+  const reversed = [...entries].reverse();
+  listEl.innerHTML = '';
+  reversed.forEach((e, ri) => {
+    const i = entries.length - 1 - ri;
+    const prev = entries[i - 1];
+    let gainTxt = '';
+    let gainClass = '';
+    if (prev) {
+      const g = Math.round((lvlFloat(e.lvl, e.pct) - lvlFloat(prev.lvl, prev.pct)) * 100);
+      gainTxt = (g >= 0 ? '+' : '') + g + '%';
+      gainClass = g >= 0 ? '' : 'neg';
+    }
+    const row = document.createElement('div');
+    row.className = 'hist-row';
+    row.innerHTML = `
+      <span class="hist-date">${fmtDate(e.date)}</span>
+      <span class="hist-lvl">Lv ${e.lvl}</span>
+      <span class="hist-pct">${e.pct}%</span>
+      ${gainTxt ? `<span class="hist-gain ${gainClass}">${gainTxt}</span>` : '<span class="hist-gain" style="color:var(--text3)">—</span>'}
+      <button class="hist-del" onclick="deleteEntry(${i})" title="Deletar">×</button>
+    `;
+    listEl.appendChild(row);
+  });
+}
+
+// ─── ACTIONS ──────────────────────────────────────────────────────────────────
+function saveEntry() {
+  const lvl = parseInt(document.getElementById('inp-lvl').value);
+  const pct = parseInt(document.getElementById('inp-pct').value);
+  if (isNaN(lvl) || isNaN(pct) || lvl < 1 || lvl > 190 || pct < 0 || pct > 99) {
+    alert('Preenche o level (1-190) e a % (0-99) corretamente!');
+    return;
+  }
+  const entries = load();
+  entries.push({ lvl, pct, date: todayStr(), ts: Date.now() });
+  save(entries);
+  const msg = document.getElementById('save-msg');
+  msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 2000);
+  render();
+}
+
+function deleteEntry(i) {
+  const entries = load();
+  entries.splice(i, 1);
+  save(entries);
+  render();
+}
+
+function clearAll() {
+  if (confirm('Apagar todo o histórico? Essa ação não tem volta.')) {
+    localStorage.removeItem(KEY);
+    render();
+  }
+}
+
+function updateBar(pct) {
+  document.getElementById('today-bar').style.width = Math.min(100, pct) + '%';
+  const lvl = parseInt(document.getElementById('inp-lvl').value) || '?';
+  document.getElementById('bar-label-left').textContent = `Lv ${lvl}`;
+  document.getElementById('bar-label-right').textContent = `Lv ${(parseInt(lvl)||0)+1}`;
+}
+
+document.getElementById('inp-pct').addEventListener('input', function() {
+  updateBar(parseInt(this.value) || 0);
+});
+document.getElementById('inp-lvl').addEventListener('input', function() {
+  const pct = parseInt(document.getElementById('inp-pct').value) || 0;
+  updateBar(pct);
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') saveEntry();
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
