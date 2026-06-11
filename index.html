@@ -423,7 +423,7 @@
       </div>
       <div class="field">
         <label>% atual do level</label>
-        <input type="number" id="inp-pct" min="0" max="99" placeholder="ex: 42">
+        <input type="number" id="inp-pct" min="0" max="99.99" step="0.01" placeholder="ex: 42,32">
       </div>
     </div>
     <div class="today-bar-wrap">
@@ -493,7 +493,7 @@ const MILESTONES = [
     lvl: 140,
     tag: 'The Wilds', tagClass: 'coral',
     name: 'The Wilds (lv 141+)',
-    desc: 'DG endgame — Sunstones, Lusaka's weapons, sets lv 150',
+    desc: "DG endgame — Sunstones, Lusaka's weapons, sets lv 150",
     tooltip: `<strong>Lv 140 — The Wilds</strong><ul>
       <li><strong>Sunstones</strong>: material base para Ultimate Equipment</li>
       <li><strong>Cursed Jewelry Fragments</strong>: crafta Ultimate Jewelry Sets</li>
@@ -614,17 +614,17 @@ function render() {
   if (todayEntries.length >= 2) {
     const first = lvlFloat(todayEntries[0].lvl, todayEntries[0].pct);
     const lastT = lvlFloat(todayEntries[todayEntries.length-1].lvl, todayEntries[todayEntries.length-1].pct);
-    gainToday = Math.round((lastT - first) * 100);
+    gainToday = ((lastT - first) * 100).toFixed(2);
   } else if (todayEntries.length === 1 && entries.length >= 2) {
     const prev = entries[entries.length - 2];
     const lastT = entries[entries.length - 1];
     if (prev.date !== todayStr()) {
-      gainToday = Math.round((lvlFloat(lastT.lvl, lastT.pct) - lvlFloat(prev.lvl, prev.pct)) * 100);
+      gainToday = ((lvlFloat(lastT.lvl, lastT.pct) - lvlFloat(prev.lvl, prev.pct)) * 100).toFixed(2);
     }
   }
   const gainEl = document.getElementById('gain-today');
-  gainEl.textContent = (gainToday >= 0 ? '+' : '') + gainToday + '%';
-  gainEl.className = 'scard-value ' + (gainToday >= 0 ? 'green' : 'red');
+  gainEl.textContent = (parseFloat(gainToday) >= 0 ? '+' : '') + gainToday + '%';
+  gainEl.className = 'scard-value ' + (parseFloat(gainToday) >= 0 ? 'green' : 'red');
   document.getElementById('sessions-today').textContent =
     todayEntries.length + ' registro' + (todayEntries.length !== 1 ? 's' : '') + ' hoje';
 
@@ -636,7 +636,7 @@ function render() {
     const span = lvlFloat(recent[recent.length-1].lvl, recent[recent.length-1].pct)
                - lvlFloat(recent[0].lvl, recent[0].pct);
     const days = Math.max(1, (new Date(recent[recent.length-1].date) - new Date(recent[0].date)) / 86400000);
-    avg7 = Math.round(span * 100 / days);
+    avg7 = parseFloat((span * 100 / days).toFixed(2));
   }
   document.getElementById('daily-avg').textContent = avg7 > 0 ? avg7 + '%' : '—';
 
@@ -752,16 +752,16 @@ function renderHistory(entries) {
     let gainTxt = '';
     let gainClass = '';
     if (prev) {
-      const g = Math.round((lvlFloat(e.lvl, e.pct) - lvlFloat(prev.lvl, prev.pct)) * 100);
-      gainTxt = (g >= 0 ? '+' : '') + g + '%';
-      gainClass = g >= 0 ? '' : 'neg';
+      const g = ((lvlFloat(e.lvl, e.pct) - lvlFloat(prev.lvl, prev.pct)) * 100).toFixed(2);
+      gainTxt = (parseFloat(g) >= 0 ? '+' : '') + g + '%';
+      gainClass = parseFloat(g) >= 0 ? '' : 'neg';
     }
     const row = document.createElement('div');
     row.className = 'hist-row';
     row.innerHTML = `
       <span class="hist-date">${fmtDate(e.date)}</span>
       <span class="hist-lvl">Lv ${e.lvl}</span>
-      <span class="hist-pct">${e.pct}%</span>
+      <span class="hist-pct">${parseFloat(e.pct).toFixed(2)}%</span>
       ${gainTxt ? `<span class="hist-gain ${gainClass}">${gainTxt}</span>` : '<span class="hist-gain" style="color:var(--text3)">—</span>'}
       <button class="hist-del" data-idx="${i}" title="Deletar">×</button>
     `;
@@ -772,9 +772,9 @@ function renderHistory(entries) {
 // ─── ACTIONS ──────────────────────────────────────────────────────────────────
 function saveEntry() {
   const lvl = parseInt(document.getElementById('inp-lvl').value);
-  const pct = parseInt(document.getElementById('inp-pct').value);
-  if (isNaN(lvl) || isNaN(pct) || lvl < 1 || lvl > 190 || pct < 0 || pct > 99) {
-    alert('Preenche o level (1-190) e a % (0-99) corretamente!');
+  const pct = parseFloat(parseFloat(document.getElementById('inp-pct').value).toFixed(2));
+  if (isNaN(lvl) || isNaN(pct) || lvl < 1 || lvl > 190 || pct < 0 || pct > 99.99) {
+    alert('Preenche o level (1-190) e a % (0-99.99) corretamente!');
     return;
   }
   const entries = load();
@@ -808,10 +808,10 @@ function updateBar(pct) {
 }
 
 document.getElementById('inp-pct').addEventListener('input', function() {
-  updateBar(parseInt(this.value) || 0);
+  updateBar(parseFloat(this.value) || 0);
 });
 document.getElementById('inp-lvl').addEventListener('input', function() {
-  const pct = parseInt(document.getElementById('inp-pct').value) || 0;
+  const pct = parseFloat(document.getElementById('inp-pct').value) || 0;
   updateBar(pct);
 });
 document.getElementById('btn-save').addEventListener('click', saveEntry);
