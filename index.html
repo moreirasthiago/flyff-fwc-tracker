@@ -213,87 +213,117 @@
     margin-top: 5px;
   }
 
-  /* MILESTONES */
-  .milestones { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
-  .ms {
+  /* MILESTONE STRIP */
+  .ms-strip {
+    display: flex;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    cursor: pointer;
-    transition: border-color 0.2s;
+    border-radius: 14px;
+    padding: 1.25rem 0.75rem 0.85rem;
     position: relative;
+    overflow: visible;
+    margin-bottom: 1.5rem;
   }
-  .ms:hover { border-color: var(--border2); }
-  .ms.done { border-color: rgba(46,216,168,0.3); }
-  .ms.next { border-color: var(--purple); }
-  .ms.locked { opacity: 0.55; }
-
-  .ms-lvl {
-    font-size: 1rem; font-weight: 700;
-    color: var(--purple2);
-    width: 42px; flex-shrink: 0;
+  .ms-line {
+    position: absolute; top: 29px; left: 20px; right: 20px;
+    height: 2px; background: var(--border);
   }
-  .ms.done .ms-lvl { color: var(--teal); }
-
-  .ms-info { flex: 1; min-width: 0; }
-  .ms-name { font-size: 0.82rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ms-desc { font-size: 0.72rem; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  .ms-bar-wrap {
-    width: 90px; flex-shrink: 0;
-    background: rgba(255,255,255,0.06);
-    border-radius: 99px;
-    height: 5px;
-    overflow: hidden;
+  .ms-line-fill {
+    position: absolute; top: 29px; left: 20px;
+    height: 2px; background: var(--teal2);
   }
-  @media (max-width: 480px) { .ms-bar-wrap { display: none; } }
-  .ms-bar { height: 5px; border-radius: 99px; background: var(--purple3); }
-  .ms.done .ms-bar { background: var(--teal2); }
-  .ms.next .ms-bar { background: linear-gradient(90deg, var(--purple3), var(--purple2)); }
-
-  .ms-eta {
-    font-size: 0.75rem; color: var(--text2);
-    width: 72px; text-align: right; flex-shrink: 0;
+  .ms-point {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    position: relative; z-index: 1; cursor: pointer;
   }
-  .ms.done .ms-eta { color: var(--teal); }
+  .ms-dot {
+    width: 13px; height: 13px; border-radius: 50%;
+    margin-bottom: 6px;
+    background: var(--bg3);
+    border: 2px solid var(--border2);
+  }
+  .ms-point.done .ms-dot { background: var(--teal2); border-color: var(--teal2); }
+  .ms-point.next .ms-dot { background: var(--purple); border-color: var(--purple); box-shadow: 0 0 0 3px rgba(157,111,255,0.2); }
+  .ms-lvl { font-size: 0.82rem; font-weight: 700; color: var(--text2); }
+  .ms-point.done .ms-lvl { color: var(--teal); }
+  .ms-point.next .ms-lvl { color: var(--purple2); }
+  .ms-eta { font-size: 0.65rem; color: var(--text3); margin-top: 2px; white-space: nowrap; }
   .ms-eta.danger { color: var(--coral); }
-
-  .ms-tag {
-    font-size: 0.65rem; font-weight: 600;
-    border-radius: 99px;
-    padding: 2px 8px;
-    white-space: nowrap; flex-shrink: 0;
-  }
-  .ms-tag.purple { background: rgba(157,111,255,0.2); color: var(--purple2); }
-  .ms-tag.teal   { background: rgba(46,216,168,0.18); color: var(--teal); }
-  .ms-tag.amber  { background: rgba(249,168,37,0.18); color: var(--amber); }
-  .ms-tag.coral  { background: rgba(255,107,138,0.18); color: var(--coral); }
-  .ms-tag.done   { background: rgba(46,216,168,0.15); color: var(--teal); }
-
-  /* TOOLTIP */
   .ms-tooltip {
     display: none;
-    position: absolute;
-    left: 0; top: calc(100% + 6px);
+    position: absolute; top: 52px;
+    left: 50%; transform: translateX(-50%);
     background: #252040;
     border: 1px solid var(--border2);
     border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 0.78rem;
+    padding: 10px 12px;
+    font-size: 0.74rem;
     color: var(--text2);
+    width: 170px;
     z-index: 10;
-    width: 100%;
-    line-height: 1.6;
+    line-height: 1.55;
     box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   }
-  .ms:hover .ms-tooltip { display: block; }
-  .ms-tooltip strong { color: var(--purple2); }
-  .ms-tooltip ul { padding-left: 14px; margin-top: 4px; }
-  .ms-tooltip li { margin-bottom: 2px; }
+  .ms-point:first-child .ms-tooltip { left: 0; transform: none; }
+  .ms-point:last-child .ms-tooltip { left: auto; right: 0; transform: none; }
+  .ms-point:hover .ms-tooltip { display: block; }
+  .ms-tooltip strong { color: var(--purple2); display: block; margin-bottom: 4px; }
+
+  /* HEATMAP */
+  .heatmap-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 1.5rem;
+  }
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 3px;
+  }
+  @media (max-width: 480px) { .heatmap-grid { grid-template-columns: repeat(10, 1fr); } }
+  .hcell {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: var(--bg3);
+    position: relative;
+    cursor: default;
+  }
+  .hcell[data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+    background: #252040; color: var(--text);
+    padding: 4px 8px; border-radius: 6px;
+    font-size: 0.68rem; white-space: nowrap;
+    z-index: 20; border: 1px solid var(--border2);
+  }
+  .heatmap-legend {
+    display: flex; align-items: center; gap: 5px;
+    margin-top: 10px; font-size: 0.7rem; color: var(--text3);
+    justify-content: flex-end;
+  }
+  .heatmap-legend .hcell { width: 11px; height: 11px; aspect-ratio: unset; cursor: default; }
+
+  /* CHART */
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 1.5rem;
+  }
+  .chart-wrap { position: relative; height: 220px; }
+  .chart-legend {
+    display: flex; gap: 16px; margin-top: 10px;
+    font-size: 0.72rem; color: var(--text2);
+  }
+  .chart-legend span { display: flex; align-items: center; gap: 5px; }
+  .chart-legend .line { width: 12px; height: 2px; display: inline-block; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
 
   /* HISTORY */
   .history-card {
@@ -397,19 +427,29 @@
       <div class="scard-sub" id="cur-pct">—% do level</div>
     </div>
     <div class="scard">
-      <div class="scard-label">Próximo marco</div>
-      <div class="scard-value amber" id="next-ms-lvl">—</div>
-      <div class="scard-sub" id="next-ms-eta">—</div>
-    </div>
-    <div class="scard">
       <div class="scard-label">Ganho hoje</div>
       <div class="scard-value green" id="gain-today">+0%</div>
       <div class="scard-sub" id="sessions-today">0 registros hoje</div>
     </div>
     <div class="scard">
-      <div class="scard-label">Média diária</div>
+      <div class="scard-label">Streak</div>
+      <div class="scard-value green" id="streak">0 dias</div>
+      <div class="scard-sub" id="streak-sub">registre hoje!</div>
+    </div>
+    <div class="scard">
+      <div class="scard-label">Recorde diário</div>
+      <div class="scard-value amber" id="record-day">—</div>
+      <div class="scard-sub" id="record-date">—</div>
+    </div>
+    <div class="scard">
+      <div class="scard-label">Média 7 dias</div>
       <div class="scard-value" id="daily-avg">—%</div>
-      <div class="scard-sub">últimos 7 dias</div>
+      <div class="scard-sub" id="daily-avg-sub">registre p/ calcular</div>
+    </div>
+    <div class="scard">
+      <div class="scard-label">Próximo marco</div>
+      <div class="scard-value amber" id="next-ms-lvl">—</div>
+      <div class="scard-sub" id="next-ms-eta">—</div>
     </div>
   </div>
 
@@ -439,9 +479,39 @@
     </div>
   </div>
 
-  <!-- MILESTONES -->
+  <!-- MILESTONES STRIP -->
   <div class="sec-title">Marcos</div>
-  <div class="milestones" id="milestones-list"></div>
+  <div class="ms-strip" id="ms-strip">
+    <div class="ms-line"></div>
+    <div class="ms-line-fill" id="ms-line-fill"></div>
+  </div>
+
+  <!-- HEATMAP -->
+  <div class="sec-title">Atividade diária</div>
+  <div class="heatmap-card">
+    <div class="heatmap-grid" id="heatmap-grid"></div>
+    <div class="heatmap-legend">
+      menos
+      <div class="hcell" style="background:#1a1a2a"></div>
+      <div class="hcell" style="background:#0F6E56"></div>
+      <div class="hcell" style="background:#1D9E75"></div>
+      <div class="hcell" style="background:#5DCAA5"></div>
+      <div class="hcell" style="background:#9FE1CB"></div>
+      mais
+    </div>
+  </div>
+
+  <!-- CHART -->
+  <div class="sec-title">Evolução vs meta</div>
+  <div class="chart-card">
+    <div class="chart-wrap">
+      <canvas id="progressChart" role="img" aria-label="Gráfico comparando o nível real ao longo dos dias com a meta necessária para chegar ao level 190 até 29 de outubro de 2026">Gráfico de progresso real vs meta para o level cap.</canvas>
+    </div>
+    <div class="chart-legend">
+      <span><span class="line" style="background:#1D9E75"></span>Seu progresso real</span>
+      <span><span class="line" style="background:#D85A30; border-top:2px dashed #D85A30; height:0;"></span>Ritmo necessário pro cap (190)</span>
+    </div>
+  </div>
 
   <!-- HISTORY -->
   <div class="sec-title">Histórico</div>
@@ -462,98 +532,18 @@
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const SERVER_CLOSE = new Date('2026-10-29T23:59:59');
-const SERVER_OPEN  = new Date('2026-01-01T00:00:00'); // aproximado
+const BASELINE = { date: '2026-06-11', lvl: 126, pct: 0 }; // ponto de partida real
+const LEVEL_CAP = 190;
 
 const MILESTONES = [
-  {
-    lvl: 130,
-    tag: 'dungeon', tagClass: 'amber',
-    name: 'Storm Peak Nightmare',
-    desc: 'Acesso ao melhor drop de Piercing Cards A-tier pré-140',
-    tooltip: `<strong>Lv 130 — Storm Peak Nightmare</strong><ul>
-      <li>Melhor dungeon pra farmar <strong>Piercing Cards A-tier</strong></li>
-      <li>Drops: Element Attack Boxes, Pillboxes, Rainbow Cotton Candies</li>
-      <li>Pet Cages B/A tier disponíveis</li>
-      <li>Cooldown separado por dungeon, 2 entradas grátis/dia</li>
-    </ul>`
-  },
-  {
-    lvl: 135,
-    tag: 'Penel Set', tagClass: 'purple',
-    name: 'Penel Set + STA build',
-    desc: 'Transição para full STA — survivabilidade máxima no AoE',
-    tooltip: `<strong>Lv 135 — Penel Set</strong><ul>
-      <li>Equipa o <strong>Penel Set</strong> (Psykeeper feminino)</li>
-      <li>Transição completa para build <strong>full STA</strong></li>
-      <li>Face tank AoE fica muito mais consistente</li>
-      <li>Considerar rever distribuição de pontos de status</li>
-    </ul>`
-  },
-  {
-    lvl: 140,
-    tag: 'The Wilds', tagClass: 'coral',
-    name: 'The Wilds (lv 141+)',
-    desc: "DG endgame — Sunstones, Lusaka's weapons, sets lv 150",
-    tooltip: `<strong>Lv 140 — The Wilds</strong><ul>
-      <li><strong>Sunstones</strong>: material base para Ultimate Equipment</li>
-      <li><strong>Cursed Jewelry Fragments</strong>: crafta Ultimate Jewelry Sets</li>
-      <li><strong>Ultima</strong> (10x = 1 Ultimate Orb): drop raro nos Treasure Chests</li>
-      <li><strong>Lusaka's Unique Weapons</strong>: drop de Beast King Khan</li>
-      <li>Sets de armor lv 150 para chars 1v1</li>
-      <li>Mecânicas novas: Tethered, Pestilence, Summoning Strike</li>
-      <li>Libera também as <strong>Cursed Dungeons</strong> (lv 141-160)</li>
-    </ul>`
-  },
-  {
-    lvl: 150,
-    tag: 'novos sets', tagClass: 'purple',
-    name: 'Sets Manebound / Manetress',
-    desc: 'Stats de nova geração: Spiritual Charge, Arcane Insight...',
-    tooltip: `<strong>Lv 150 — Sets nova geração</strong><ul>
-      <li><strong>Spiritual Charge Chance</strong>: +10% Skill Dmg por 5s ao causar dano</li>
-      <li><strong>Arcane Insight Chance</strong>: reset de cooldown aleatório ao usar skill</li>
-      <li><strong>Last Stand Chance</strong>: +10% Attack Power abaixo de 25% HP</li>
-      <li><strong>Healing Grace Chance</strong>: +10% healing por 5s ao usar qualquer skill</li>
-      <li><strong>Aura Burst Chance</strong>: dano AoE ao receber dano</li>
-    </ul>`
-  },
-  {
-    lvl: 160,
-    tag: 'Cursed cap', tagClass: 'teal',
-    name: 'Cursed Dungeons — nível máximo',
-    desc: 'Cap das Cursed Dungeons, melhor drop rate de Sunstones',
-    tooltip: `<strong>Lv 160 — Cursed Dungeons max tier</strong><ul>
-      <li>Cap de nível das Cursed Dungeons</li>
-      <li>Melhor drop de <strong>Sunstones</strong> e <strong>Cursed Jewelry Fragments</strong></li>
-      <li>Golden Aibatt pode spawnar — mata pra dar buff <em>Feeling Generous</em> no boss</li>
-      <li>Sem penalidade de drop por diferença de level nos dungeons instanciados</li>
-    </ul>`
-  },
-  {
-    lvl: 170,
-    tag: 'push', tagClass: 'teal',
-    name: 'Lv 170',
-    desc: 'Continuando o grind rumo ao cap',
-    tooltip: `<strong>Lv 170</strong><ul><li>Marco intermediário no trecho 160–190</li><li>Continue maximizando DG runs diárias</li></ul>`
-  },
-  {
-    lvl: 180,
-    tag: 'push', tagClass: 'amber',
-    name: 'Lv 180',
-    desc: 'A 10 levels do cap do servidor',
-    tooltip: `<strong>Lv 180</strong><ul><li>Reta final rumo ao level cap</li><li>Avalie o ritmo vs. dias restantes no servidor</li></ul>`
-  },
-  {
-    lvl: 190,
-    tag: 'CAP', tagClass: 'coral',
-    name: 'Level cap — FWC 2026',
-    desc: 'Nível máximo do servidor FWC',
-    tooltip: `<strong>Lv 190 — Level Cap FWC 2026</strong><ul>
-      <li>Level máximo do servidor FWC 2026</li>
-      <li>Servidor encerra em <strong>29/out/2026</strong></li>
-      <li>GG — missão cumprida! 🎉</li>
-    </ul>`
-  }
+  { lvl: 130, tooltip: '<strong>Storm Peak Nightmare</strong>Acesso ao melhor drop de Piercing Cards A-tier pré-140' },
+  { lvl: 135, tooltip: '<strong>Penel Set + STA</strong>Transição para full STA — survivabilidade máxima no AoE' },
+  { lvl: 140, tooltip: "<strong>The Wilds (141+)</strong>Sunstones, Lusaka's weapons, sets lv 150, Cursed Dungeons" },
+  { lvl: 150, tooltip: '<strong>Sets Manebound</strong>Spiritual Charge, Arcane Insight, Aura Burst e mais' },
+  { lvl: 160, tooltip: '<strong>Cursed cap</strong>Cap das Cursed Dungeons, melhor drop de Sunstones' },
+  { lvl: 170, tooltip: '<strong>Lv 170</strong>Marco intermediário rumo ao cap' },
+  { lvl: 180, tooltip: '<strong>Lv 180</strong>10 levels do cap do servidor' },
+  { lvl: 190, tooltip: '<strong>Level cap FWC</strong>Nível máximo — servidor encerra 29/out/2026' }
 ];
 
 // ─── STORAGE ──────────────────────────────────────────────────────────────────
@@ -575,10 +565,17 @@ function daysLeft() {
   const now = new Date();
   return Math.max(0, Math.ceil((SERVER_CLOSE - now) / 86400000));
 }
+function baselineDate() { return new Date(BASELINE.date + 'T00:00:00'); }
+function totalServerDays() {
+  return Math.ceil((SERVER_CLOSE - baselineDate()) / 86400000);
+}
 function serverPct() {
-  const total = SERVER_CLOSE - SERVER_OPEN;
-  const elapsed = new Date() - SERVER_OPEN;
+  const total = SERVER_CLOSE - baselineDate();
+  const elapsed = new Date() - baselineDate();
   return Math.min(100, Math.max(0, (elapsed / total) * 100));
+}
+function daysSinceBaseline() {
+  return Math.max(0, Math.floor((new Date() - baselineDate()) / 86400000));
 }
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
@@ -628,6 +625,51 @@ function render() {
   document.getElementById('sessions-today').textContent =
     todayEntries.length + ' registro' + (todayEntries.length !== 1 ? 's' : '') + ' hoje';
 
+  // ─ daily gains map (date -> gain in % units, using last entry per day) ─
+  const dailyLast = {};
+  entries.forEach(e => { dailyLast[e.date] = e; });
+  const dates = Object.keys(dailyLast).sort();
+  const dailyGains = {}; // date -> gain vs previous day's last entry
+  for (let i = 0; i < dates.length; i++) {
+    if (i === 0) {
+      const g = (lvlFloat(dailyLast[dates[0]].lvl, dailyLast[dates[0]].pct) - lvlFloat(BASELINE.lvl, BASELINE.pct)) * 100;
+      dailyGains[dates[0]] = g;
+    } else {
+      const g = (lvlFloat(dailyLast[dates[i]].lvl, dailyLast[dates[i]].pct) - lvlFloat(dailyLast[dates[i-1]].lvl, dailyLast[dates[i-1]].pct)) * 100;
+      dailyGains[dates[i]] = g;
+    }
+  }
+
+  // streak: consecutive days up to today/yesterday with a registered gain > 0
+  let streak = 0;
+  {
+    let d = new Date();
+    // allow today to not be registered yet without breaking streak
+    if (!(todayStr() in dailyGains)) d.setDate(d.getDate() - 1);
+    while (true) {
+      const ds = d.toISOString().slice(0, 10);
+      if (dailyGains[ds] !== undefined && dailyGains[ds] > 0) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+      } else break;
+    }
+  }
+  document.getElementById('streak').textContent = streak + (streak === 1 ? ' dia' : ' dias');
+  document.getElementById('streak-sub').textContent = (todayStr() in dailyGains) ? 'registrado hoje ✓' : 'registre hoje!';
+
+  // record day
+  let recordDate = null, recordVal = -Infinity;
+  Object.entries(dailyGains).forEach(([d, g]) => {
+    if (g > recordVal) { recordVal = g; recordDate = d; }
+  });
+  if (recordDate) {
+    document.getElementById('record-day').textContent = '+' + recordVal.toFixed(2) + '%';
+    document.getElementById('record-date').textContent = fmtDate(recordDate);
+  } else {
+    document.getElementById('record-day').textContent = '—';
+    document.getElementById('record-date').textContent = '—';
+  }
+
   // 7-day average (% per day across levels)
   let avg7 = 0;
   const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
@@ -639,6 +681,7 @@ function render() {
     avg7 = parseFloat((span * 100 / days).toFixed(2));
   }
   document.getElementById('daily-avg').textContent = avg7 > 0 ? avg7 + '%' : '—';
+  document.getElementById('daily-avg-sub').textContent = avg7 > 0 ? `${dates.length} dia${dates.length!==1?'s':''} registrados` : 'registre p/ calcular';
 
   // pace alert
   const alertEl = document.getElementById('pace-alert');
@@ -662,74 +705,76 @@ function render() {
     alertEl.style.display = 'none';
   }
 
-  // milestones
+  // milestones strip
   const curFloat = lvlFloat(curLvl, curPct);
-  const msEl = document.getElementById('milestones-list');
-  msEl.innerHTML = '';
+  const stripEl = document.getElementById('ms-strip');
+  const fillEl = document.getElementById('ms-line-fill');
+  // remove old points (keep the two line divs)
+  stripEl.querySelectorAll('.ms-point').forEach(el => el.remove());
+
   let foundNext = false;
+  let nextMsData = null;
   MILESTONES.forEach(ms => {
     const done = curFloat >= ms.lvl;
     const isNext = !done && !foundNext;
-    if (isNext) foundNext = true;
+    if (isNext) { foundNext = true; nextMsData = ms; }
 
-    const distLevels = Math.max(0, ms.lvl - curFloat);
-    const distPct = distLevels * 100; // in % units
-
+    const distPct = Math.max(0, (ms.lvl - curFloat) * 100);
     let etaTxt = '';
     let etaClass = '';
     if (done) {
-      etaTxt = 'Concluído';
+      etaTxt = '✓';
     } else if (avg7 > 0) {
       const etaDays = Math.ceil(distPct / avg7);
       const etaDate = new Date();
       etaDate.setDate(etaDate.getDate() + etaDays);
-      const etaAfterServer = etaDate > SERVER_CLOSE;
-      if (etaAfterServer) {
-        etaTxt = 'depois do close ⚠️';
+      if (etaDate > SERVER_CLOSE) {
+        etaTxt = '⚠️ tarde';
         etaClass = 'danger';
       } else {
         const dd = String(etaDate.getDate()).padStart(2, '0');
         const mm = String(etaDate.getMonth() + 1).padStart(2, '0');
-        etaTxt = `~${dd}/${mm} (${etaDays}d)`;
+        etaTxt = `${dd}/${mm}`;
         if (etaDays > dl * 0.8) etaClass = 'danger';
       }
     } else {
-      etaTxt = 'registre mais';
+      etaTxt = '—';
     }
 
-    // bar progress within this milestone (from previous to this)
-    const prevMs = MILESTONES.find(m2 => m2.lvl < ms.lvl && curFloat >= (MILESTONES[MILESTONES.indexOf(ms)-1]?.lvl || 0));
-    const prevLvl = isNext ? curLvl : (MILESTONES[MILESTONES.indexOf(ms)-1]?.lvl || ms.lvl - 10);
-    const range = ms.lvl - prevLvl;
-    const progress = done ? 100 : Math.round(Math.max(0, (curFloat - prevLvl) / range * 100));
-
     const div = document.createElement('div');
-    div.className = `ms${done ? ' done' : ''}${isNext ? ' next' : ''}${(!done && !isNext) ? ' locked' : ''}`;
+    div.className = `ms-point${done ? ' done' : ''}${isNext ? ' next' : ''}`;
     div.innerHTML = `
+      <div class="ms-dot"></div>
       <div class="ms-lvl">${ms.lvl}</div>
-      <div class="ms-info">
-        <div class="ms-name">${ms.name}</div>
-        <div class="ms-desc">${ms.desc}</div>
-      </div>
-      <div class="ms-bar-wrap"><div class="ms-bar" style="width:${progress}%"></div></div>
       <div class="ms-eta ${etaClass}">${etaTxt}</div>
-      <span class="ms-tag ${done ? 'done' : ms.tagClass}">${done ? '✓ ok' : ms.tag}</span>
       <div class="ms-tooltip">${ms.tooltip}</div>
     `;
-    msEl.appendChild(div);
+    stripEl.appendChild(div);
   });
 
+  // line fill width: proportional to progress between first and last milestone
+  const firstLvl = MILESTONES[0].lvl;
+  const lastLvl = MILESTONES[MILESTONES.length - 1].lvl;
+  const fillRatio = Math.min(1, Math.max(0, (curFloat - firstLvl) / (lastLvl - firstLvl)));
+  fillEl.style.width = `calc((100% - 40px) * ${fillRatio})`;
+
   // next milestone summary
-  const nextMs = MILESTONES.find(m => lvlFloat(curLvl, curPct) < m.lvl);
-  if (nextMs) {
-    document.getElementById('next-ms-lvl').textContent = nextMs.lvl;
-    const dist = Math.max(0, nextMs.lvl - curFloat);
+  if (nextMsData) {
+    document.getElementById('next-ms-lvl').textContent = nextMsData.lvl;
+    const dist = Math.max(0, nextMsData.lvl - curFloat);
     document.getElementById('next-ms-eta').textContent =
-      avg7 > 0 ? `~${Math.ceil(dist * 100 / avg7)} dias` : `${(dist * 100).toFixed(0)}% de distância`;
+      avg7 > 0 ? `~${Math.ceil(dist * 100 / avg7)} dias` : `${(dist * 100).toFixed(1)}% restante`;
   } else {
     document.getElementById('next-ms-lvl').textContent = 'Cap!';
-    document.getElementById('next-ms-eta').textContent = 'você chegou lá';
+    document.getElementById('next-ms-eta').textContent = 'você chegou lá 🎉';
   }
+
+  // heatmap
+  renderHeatmap(dailyGains);
+
+  // chart
+  renderChart(entries, dailyGains, dates, avg7);
+
 
   // history
   renderHistory(entries);
@@ -769,7 +814,149 @@ function renderHistory(entries) {
   });
 }
 
-// ─── ACTIONS ──────────────────────────────────────────────────────────────────
+// ─── HEATMAP ──────────────────────────────────────────────────────────────────
+let chartInstance = null;
+
+function renderHeatmap(dailyGains) {
+  const grid = document.getElementById('heatmap-grid');
+  grid.innerHTML = '';
+
+  // last 60 days, oldest first
+  const numDays = 60;
+  const today = new Date();
+  let maxGain = 0;
+  Object.values(dailyGains).forEach(g => { if (g > maxGain) maxGain = g; });
+
+  for (let i = numDays - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0, 10);
+    const gain = dailyGains[ds];
+    const cell = document.createElement('div');
+    cell.className = 'hcell';
+
+    if (gain === undefined) {
+      cell.style.background = '#1a1a2a';
+      if (d <= today) cell.dataset.tip = `${fmtDate(ds)}: sem registro`;
+    } else {
+      const ratio = maxGain > 0 ? Math.max(0, gain) / maxGain : 0;
+      let color;
+      if (gain <= 0) color = '#0F6E56';
+      else if (ratio < 0.25) color = '#0F6E56';
+      else if (ratio < 0.5) color = '#1D9E75';
+      else if (ratio < 0.75) color = '#5DCAA5';
+      else color = '#9FE1CB';
+      cell.style.background = color;
+      cell.dataset.tip = `${fmtDate(ds)}: ${gain >= 0 ? '+' : ''}${gain.toFixed(2)}%`;
+    }
+    grid.appendChild(cell);
+  }
+}
+
+// ─── CHART ────────────────────────────────────────────────────────────────────
+function renderChart(entries, dailyGains, dates, avg7) {
+  const ctx = document.getElementById('progressChart');
+  if (!ctx || typeof Chart === 'undefined') return;
+
+  // build cumulative real progress series, starting from baseline
+  const points = [{ date: BASELINE.date, lvl: lvlFloat(BASELINE.lvl, BASELINE.pct) }];
+  dates.forEach(d => {
+    const e = entries.filter(en => en.date === d).slice(-1)[0];
+    points.push({ date: d, lvl: lvlFloat(e.lvl, e.pct) });
+  });
+
+  // goal line: from baseline lvl to LEVEL_CAP across total server days
+  const totalDays = totalServerDays();
+  const startLvl = lvlFloat(BASELINE.lvl, BASELINE.pct);
+  const goalPerDay = (LEVEL_CAP - startLvl) / totalDays;
+
+  // build a unified set of x-axis dates: from baseline to server close, sampled
+  const labels = [];
+  const realData = [];
+  const goalData = [];
+
+  const lastRealDate = points[points.length - 1].date;
+  const lastRealDateObj = new Date(lastRealDate + 'T00:00:00');
+
+  // show real progress up to today/last entry, and goal line across full range (sampled every ~7 days)
+  const sampleEvery = Math.max(1, Math.floor(totalDays / 24)); // ~24 points across the whole range
+  let cursor = new Date(baselineDate());
+  let pointIdx = 0;
+
+  while (cursor <= SERVER_CLOSE) {
+    const ds = cursor.toISOString().slice(0, 10);
+    labels.push(fmtDate(ds));
+
+    // goal value
+    const dayOffset = Math.round((cursor - baselineDate()) / 86400000);
+    goalData.push(parseFloat((startLvl + goalPerDay * dayOffset).toFixed(2)));
+
+    // real value: find closest known point at or before this date, else null if after last real date
+    if (cursor <= lastRealDateObj) {
+      let val = points[0].lvl;
+      for (const p of points) {
+        if (new Date(p.date + 'T00:00:00') <= cursor) val = p.lvl;
+        else break;
+      }
+      realData.push(parseFloat(val.toFixed(2)));
+    } else {
+      realData.push(null);
+    }
+
+    cursor.setDate(cursor.getDate() + sampleEvery);
+  }
+
+  const isDark = !matchMedia('(prefers-color-scheme: light)').matches;
+  const gridColor = 'rgba(255,255,255,0.06)';
+  const tickColor = '#9b90c0';
+
+  if (chartInstance) chartInstance.destroy();
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Real',
+          data: realData,
+          borderColor: '#1D9E75',
+          backgroundColor: 'transparent',
+          tension: 0.25,
+          pointRadius: 2,
+          spanGaps: false,
+        },
+        {
+          label: 'Meta',
+          data: goalData,
+          borderColor: '#D85A30',
+          backgroundColor: 'transparent',
+          borderDash: [5, 4],
+          tension: 0,
+          pointRadius: 0,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          ticks: { color: tickColor, maxRotation: 0, autoSkip: true, maxTicksLimit: 8 },
+          grid: { display: false }
+        },
+        y: {
+          ticks: { color: tickColor },
+          grid: { color: gridColor },
+          title: { display: true, text: 'Level', color: tickColor }
+        }
+      }
+    }
+  });
+}
+
+
 function saveEntry() {
   const lvl = parseInt(document.getElementById('inp-lvl').value);
   const pct = parseFloat(parseFloat(document.getElementById('inp-pct').value).toFixed(2));
